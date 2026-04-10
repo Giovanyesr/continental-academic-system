@@ -454,6 +454,7 @@ export default function CatalogoServicios() {
                 <p className="text-gray-500 mb-6">Tu comprobante de pago será enviado a tu correo electrónico</p>
                 <div className="bg-green-50 rounded-2xl p-4 mb-6">
                   <p className="text-sm text-green-700">Monto pagado: <span className="font-bold">S/ {totalCarrito.toFixed(2)}</span></p>
+                  <p className="text-sm text-green-700 mt-2">Saldo disponible: <span className="font-bold">S/ 19.00</span></p>
                 </div>
                 <button onClick={resetModal} className="bg-[#6802c1] text-white py-3 px-8 rounded-xl font-semibold hover:bg-[#5802a1] transition-colors">
                   Aceptar
@@ -601,6 +602,8 @@ export default function CatalogoServicios() {
                             )}
                           </div>
                         </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-600 mb-1">Fecha de Nacimiento</label>
                           <input
@@ -609,6 +612,15 @@ export default function CatalogoServicios() {
                             onChange={e => setFechaNacimiento(e.target.value)}
                             className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                           />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Región</label>
+                          <select
+                            disabled
+                            className="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-xl outline-none"
+                          >
+                            <option value="Junin">Junín</option>
+                          </select>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-600 mb-1">Provincia</label>
@@ -623,6 +635,25 @@ export default function CatalogoServicios() {
                             <option value="Tarma">Tarma</option>
                             <option value="Jauja">Jauja</option>
                             <option value="Chanchamayo">Chanchamayo</option>
+                            <option value="Satipo">Satipo</option>
+                            <option value="La Oroya">La Oroya</option>
+                            <option value="Cerro de Pasco">Cerro de Pasco</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-4 mt-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-1">Distrito</label>
+                          <select className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all">
+                            <option value="">Seleccionar</option>
+                            <option value="Huancayo">Huancayo</option>
+                            <option value="El Tambo">El Tambo</option>
+                            <option value="Chilca">Chilca</option>
+                            <option value="Pilcomayo">Pilcomayo</option>
+                            <option value="Culluchaca">Culluchaca</option>
+                            <option value="Hualhuas">Hualhuas</option>
+                            <option value="Ingenio">Ingenio</option>
+                            <option value="Quilcas">Quilcas</option>
                           </select>
                         </div>
                       </div>
