@@ -35,8 +35,9 @@ export default function LoginPage() {
 
       router.push("/portal");
 
-    } catch {
-      setError("Error inesperado. Intenta nuevamente.");
+    } catch (error) {
+      console.error("LOGIN ERROR:", error);
+      setError("Error interno del servidor");
     } finally {
       setLoading(false);
     }
