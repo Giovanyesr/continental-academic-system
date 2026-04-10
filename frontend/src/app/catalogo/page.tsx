@@ -65,6 +65,7 @@ export default function CatalogoServicios() {
   const { estudiante: authEstudiante, loading: authLoading } = useAuth();
   const [estudiante, setEstudiante] = useState<Estudiante | null>(null);
   const [catalogo, setCatalogo] = useState<Record<number, Servicio[]>>({});
+  const [catalogoError, setCatalogoError] = useState<string | null>(null);
   const [pagosHistorico, setPagosHistorico] = useState<number[]>([]);
   const [carrito, setCarrito] = useState<number[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -85,7 +86,7 @@ export default function CatalogoServicios() {
     if (dni.length !== 8) return;
     setDniBuscando(true);
     try {
-      const res = await fetch(`http://localhost:3001/api/dni/${dni}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dni/${dni}`);
       const data = await res.json();
       if (data.success) {
         setDniNombre(data.nombreCompleto);
@@ -105,7 +106,7 @@ export default function CatalogoServicios() {
     }
     if (authEstudiante) {
       setEstudiante(authEstudiante as Estudiante);
-      fetch(`http://localhost:3001/api/estudiantes/${authEstudiante.id}/pagos`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/estudiantes/${authEstudiante.id}/pagos`)
         .then(r => r.json())
         .then((data: { detalles: { servicio_id: number }[] }[]) => {
           if (!Array.isArray(data)) {
@@ -117,8 +118,18 @@ export default function CatalogoServicios() {
         })
         .catch((e) => console.error("Error obteniendo pagos:", e));
     }
-    fetch(`http://localhost:3001/api/servicios`).then(r => r.json()).then(data => setCatalogo(data.catalogo));
-  }, [authLoading, authEstudiante, router]);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/servicios`)
+      .then(r => r.json())
+      .then(data => {
+        console.log("Servicios cargados:", data);
+        setCatalogo(data.catalogo || {});
+        setCatalogoError(null);
+      })
+      .catch(e => {
+        console.error("Error cargando servicios:", e);
+        setCatalogoError("No se pudo conectar al servidor. URL: " + process.env.NEXT_PUBLIC_API_URL);
+      });
+  }, [authLoading, authEstudiante]);
 
   const allServicios = useMemo(() => Object.values(catalogo).flat(), [catalogo]);
 
@@ -163,7 +174,7 @@ export default function CatalogoServicios() {
         body.provincia_pagador = provinciaPagador;
       }
 
-      const res = await fetch(`http://localhost:3001/api/pagos`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pagos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
@@ -255,10 +266,33 @@ export default function CatalogoServicios() {
             subtitle="Selecciona los servicios que necesitas y realiza el pago"
           />
 
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Services List */}
-            <div className="lg:col-span-2 space-y-4">
-              {FASES.map((fase) => {
+          {Object.keys(catalogo).length === 0 && (
+            <div className="col-span-full text-center py-8 text-gray-500">
+              {catalogoError ? (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-left">
+                  <p className="text-red-700 font-semibold mb-2">Error de conexión:</p>
+                  <p className="text-red-600 text-sm">{catalogoError}</p>
+                  <button 
+                    onClick={() => window.location.reload()}
+                    className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg text-sm"
+                  >
+                    Recargar página
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p>Cargando servicios...</p>
+                  <p className="text-sm mt-2">URL: {process.env.NEXT_PUBLIC_API_URL}</p>
+                </>
+              )}
+            </div>
+          )}
+          
+          {Object.keys(catalogo).length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Services List */}
+              <div className="col-span-1 lg:col-span-2 space-y-4">
+                {FASES.map((fase) => {
                 const servicios = catalogo[fase] || [];
                 if (servicios.length === 0) return null;
                 const isExpanded = expandedFase === fase;
@@ -334,7 +368,7 @@ export default function CatalogoServicios() {
             </div>
 
             {/* Cart Sidebar */}
-            <div className="lg:col-span-1">
+            <div className="col-span-1 lg:col-span-1">
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden sticky top-24 border border-gray-100">
                 <div className="bg-gradient-to-r from-[#6802c1] via-[#7B2CBF] to-[#9333EA] px-6 py-5">
                   <div className="flex items-center gap-3">
@@ -401,6 +435,7 @@ export default function CatalogoServicios() {
               </div>
             </div>
           </div>
+          )}
         </div>
       </main>
 

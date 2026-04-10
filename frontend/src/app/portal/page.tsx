@@ -31,7 +31,7 @@ export default function PortalPage() {
       return;
     }
     if (estudiante) {
-      fetch(`http://localhost:3001/api/estudiantes/${estudiante.id}/pagos`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/estudiantes/${estudiante.id}/pagos`)
         .then((r) => r.json())
         .then((data) => {
           setPagos(data || []);
