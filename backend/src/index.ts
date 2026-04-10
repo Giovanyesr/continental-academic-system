@@ -10,6 +10,7 @@ app.use(express.json());
 
 // Login endpoint
 app.post('/api/auth/login', async (req, res) => {
+  console.log("LOGIN BODY:", req.body);
   const { correo, password } = req.body;
 
   if (!correo || !password) {
@@ -203,13 +204,13 @@ const datosReniec: Record<string, { nombres: string; paterno: string; materno: s
 
 app.get('/api/dni/:dni', async (req, res) => {
   const { dni } = req.params;
-  
+
   if (!dni || dni.length !== 8) {
     return res.status(400).json({ error: 'DNI debe tener 8 dígitos.' });
   }
 
   const datos = datosReniec[dni];
-  
+
   if (datos) {
     res.json({
       success: true,
