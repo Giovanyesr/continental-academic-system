@@ -14,7 +14,7 @@ app.post('/api/auth/login', async (req, res) => {
   const { correo, password } = req.body;
 
   if (!correo || !password) {
-    return res.status(400).json({ error: 'Correo y contraseña son requeridos.' });
+    return res.status(400).json({ success: false, message: 'Correo y contraseña son requeridos.' });
   }
 
   try {
@@ -23,24 +23,27 @@ app.post('/api/auth/login', async (req, res) => {
     });
 
     if (!estudiante) {
-      return res.status(401).json({ error: 'Credenciales incorrectas.' });
+      return res.status(401).json({ success: false, message: 'Credenciales incorrectas.' });
     }
 
     if (estudiante.password !== password) {
-      return res.status(401).json({ error: 'Credenciales incorrectas.' });
+      return res.status(401).json({ success: false, message: 'Credenciales incorrectas.' });
     }
 
     res.json({
-      id: estudiante.id,
-      dni: estudiante.dni,
-      nombre: estudiante.nombre,
-      correo: estudiante.correo,
-      codigo_universitario: estudiante.codigo_universitario,
-      carrera: estudiante.carrera,
-      facultad: estudiante.facultad,
+      success: true,
+      data: {
+        id: estudiante.id,
+        dni: estudiante.dni,
+        nombre: estudiante.nombre,
+        correo: estudiante.correo,
+        codigo_universitario: estudiante.codigo_universitario,
+        carrera: estudiante.carrera,
+        facultad: estudiante.facultad,
+      }
     });
   } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor.' });
+    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
   }
 });
 

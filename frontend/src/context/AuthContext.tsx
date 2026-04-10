@@ -47,23 +47,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ correo, password }),
       });
 
-      if (!resp.ok) {
-        const errorData = await resp.json().catch(() => null);
+      const data = await resp.json();
 
+      if (!resp.ok || !data.success) {
         return {
           success: false,
-          message: errorData?.message || "Credenciales incorrectas",
+          message: data.message || "Credenciales incorrectas",
         };
       }
 
-      const data = await resp.json();
-
-      setEstudiante(data);
-      localStorage.setItem("estudiante", JSON.stringify(data));
+      setEstudiante(data.data);
+      localStorage.setItem("estudiante", JSON.stringify(data.data));
 
       return {
         success: true,
-        data,
+        data: data.data,
       };
     } catch (error: any) {
       return {
