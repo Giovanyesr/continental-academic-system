@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Estudiante {
+  id                   Int      @id @default(autoincrement())
+  dni                  String   @unique
+  codigo_universitario String   @unique
+  nombre               String
+  correo               String   @unique
+  password             String
+  fecha_nacimiento     String?
+  provincia_nacimiento String?
+  nombre_padre         String?
+  nombre_madre         String?
+  carrera              String
+  facultad             String
+  pagos                Pago[]
+}
+
+model Pago {
+  id            Int      @id @default(autoincrement())
+  estudiante_id Int
+  monto_total   Float
+  metodo_pago   String
+  banco         String
+  estado        String   @default("COMPLETADO")
+  fecha         DateTime @default(now())
+  tipo_pago     String   @default("TARJETA")
+  dni_pagador   String?
+  region_pagador   String?
+  provincia_pagador String?
+  distrito_pagador  String?
+  validado_dni  Boolean  @default(false)
+
+  estudiante    Estudiante     @relation(fields: [estudiante_id], references: [id])
+  detalles      DetallePago[]
+}
+
+model Servicio {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  categoria   String
+  precio      Float
+  fase        Int
+  detalles    DetallePago[]
+}
+
+model DetallePago {
+  id          Int      @id @default(autoincrement())
+  pago_id     Int
+  servicio_id Int
+  precio      Float
+
+  pago        Pago     @relation(fields: [pago_id], references: [id])
+  servicio    Servicio @relation(fields: [servicio_id], references: [id])
+}
