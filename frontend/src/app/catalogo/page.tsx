@@ -83,6 +83,10 @@ export default function CatalogoServicios() {
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedFase, setExpandedFase] = useState<number | null>(1);
+  const [saldoTotal] = useState<number>(10179);
+  const [totalPagado, setTotalPagado] = useState<number>(0);
+
+  const saldoRestante = saldoTotal - totalPagado;
 
   const buscarDNI = async (dni: string) => {
     if (dni.length !== 8) return;
@@ -191,6 +195,7 @@ export default function CatalogoServicios() {
       }
 
       setExito(true);
+      setTotalPagado(totalPagado + totalCarrito);
       setToast({ message: "¡Pago procesado exitosamente!", type: "success" });
       setTimeout(() => {
         setPagosHistorico([...pagosHistorico, ...carrito]);
@@ -456,7 +461,7 @@ export default function CatalogoServicios() {
                 <p className="text-gray-500 mb-6">Tu comprobante de pago será enviado a tu correo electrónico</p>
                 <div className="bg-green-50 rounded-2xl p-4 mb-6">
                   <p className="text-sm text-green-700">Monto pagado: <span className="font-bold">S/ {totalCarrito.toFixed(2)}</span></p>
-                  <p className="text-sm text-green-700 mt-2">Saldo disponible: <span className="font-bold">S/ 19.00</span></p>
+                  <p className="text-sm text-green-700 mt-2">Saldo disponible: <span className="font-bold">S/ {saldoRestante.toFixed(2)}</span></p>
                 </div>
                 <button onClick={resetModal} className="bg-[#6802c1] text-white py-3 px-8 rounded-xl font-semibold hover:bg-[#5802a1] transition-colors">
                   Aceptar
